@@ -1,0 +1,41 @@
+requests = [75, 25, 290, 215, 50, 75, 120, 85, 245, 98]
+head_start = 50 
+first_track = 0
+last_track = 300
+
+def calculate_movement(sequence, start):
+    total = 0
+    current = start
+    for r in sequence:
+        total += abs(r - current)
+        current = r
+    return total
+
+# 1. First Come First Served (FCFS)
+fcfs_seq = requests.copy()
+print(f"FCFS Sequence: {fcfs_seq} | Movement: {calculate_movement(fcfs_seq, head_start)}")
+
+# 2. Shortest Time First (STF)
+stf_seq = []
+pending = requests.copy()
+current_head = head_start
+while pending:
+    closest = min(pending, key=lambda x: abs(x - current_head))
+    stf_seq.append(closest)
+    pending.remove(closest)
+    current_head = closest
+print(f"STF Sequence: {stf_seq} | Movement: {calculate_movement(stf_seq, head_start)}")
+
+# 3. SCAN (Elevator)
+left = sorted([r for r in requests if r < head_start], reverse=True)
+right = sorted([r for r in requests if r >= head_start])
+scan_seq = left + [first_track] + right
+print(f"SCAN Sequence: {scan_seq} | Movement: {calculate_movement(scan_seq, head_start)}")
+
+# 4. Circular SCAN (C-SCAN)
+cscan_seq = left + [first_track, last_track] + sorted(right, reverse=True)
+print(f"C-SCAN Sequence: {cscan_seq} | Movement: {calculate_movement(cscan_seq, head_start)}")
+
+# 5. C-LOOK
+clook_seq = left + sorted(right, reverse=True)
+print(f"C-LOOK Sequence: {clook_seq} | Movement: {calculate_movement(clook_seq, head_start)}")
